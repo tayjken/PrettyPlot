@@ -70,7 +70,18 @@ var makeTranslateString = function(x,y)
 var drawAxes = function(graphDim,margins,
                          xScale,yScale)
 {
-   
+    var xAxis = d3.axisBottom(xScale);
+    var yAxis = d3.axisLeft(yScale);
+    
+    var axes = d3.select("svg")
+    .append("g");
+    axes.append("g")
+    .attr("transform","translate("+margins.left+","+(margins.top+graphDim.height)+")")
+    .call(xAxis);
+    
+    axes.append("g")
+    .attr("transform","translate("+margins.left+","+(margins.top)+")")
+    .call(yAxis);
  
 }
 
@@ -79,15 +90,37 @@ var drawAxes = function(graphDim,margins,
 //margins - objedct that stores the size of the margins
 var drawLabels = function(graphDim,margins)
 {
+    var labels = d3.select("svg")
+    .append("g")
+    .classed("labels",true);
     
+    labels.append("text")
+    .text("Trump Support")
+    .classed("title",true)
+    .attr("text-anchor", "middle")
+    .attr("x", margins.left+(graphDim.width/2))
+    .attr("y", margins.top)
+    
+    labels.append("text")
+    .text("Percent White")
+    .classed("label", true)
+    .attr("text-anchor","middle")
+    .attr("x", margins.left+graphDim.width/2)
+    .attr("y", graphDim.height+(margins.bottom+margins.top))
+    
+    labels.append("g")
+    .attr("transform", "translate(20,"+(margins.top+
+    (graphDim.height/2))+")")
+    .append("text")
+    .text("Percent Voting for Trump")
+    .classed("label",true)
+    .attr("text-anchor","middle")
+    .attr("transform","rotate(90)")
 }
 
 
 var drawLegend = function(graphDim,margins)
-{
-    
- 
-   var categories = [
+{  var categories = [
        {
            class:"lessCollege",
            name:"Less College"
@@ -98,7 +131,33 @@ var drawLegend = function(graphDim,margins)
        }
     ]
 
-
+    var legend = d3.select("svg")
+    .append("g")
+    .classed("legend", true)
+    .attr("transform", "translate("+
+    (margins.left+10)+","+(margins.top+10)+")");
+ 
+    var entries = legend.selectAll("g")
+    .data(categories)
+    .enter()
+    .append("g")
+    .classed("legendEntry", true)
+    .attr("class", function(category){
+        return category.class;
+    })
+    .attr("transform", function(categories, index){
+        return "translate(0,"+index+20+")";
+    })
+    
+    entries.append("rect")
+    .attr("width", 10)
+    .attr("height", 10)
+ 
+    entries.append("text")
+    .text(function(category){return category.name;})
+    .attr("x", 15)
+    .attr("y", 10)
+ 
     
     
     
